@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card-custom mb-4">
+  <h2 class="fw-bold">Doctor Dashboard 👨‍⚕️ {{user.username}}</h2>
+  <a href="/doctor/create-slot/" class="btn btn-primary btn-custom mt-2">+ Create Slot</a>
+</div>
+
+<div class="card-custom mb-4">
+  <h4 class="fw-bold">My Appointments</h4>
+
+  {% if appointments %}
+    <table class="table table-dark table-striped mt-3">
+      <tr>
+        <th>Patient</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+      {% for appointment in appointments %}
+      <tr>
+        <td>{{appointment.patient.username}}</td>
+        <td>{{appointment.slot.date}}</td>
+        <td>{{appointment.slot.start_time}} - {{appointment.slot.end_time}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No appointments yet. Appointments will appear here when a patient books one of your slots.</p>
+  {% endif %}
+</div>
+
+<div class="card-custom">
+  <h4 class="fw-bold">My Slots</h4>
+
+  {% if slots %}
+    <table class="table table-dark table-striped mt-3">
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+      </tr>
+      {% for s in slots %}
+      <tr>
+        <td>{{s.date}}</td>
+        <td>{{s.start_time}} - {{s.end_time}}</td>
+        <td>
+          {% if s.is_booked %}
+            ✅ Booked
+          {% else %}
+            🟢 Available
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No slots created yet.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

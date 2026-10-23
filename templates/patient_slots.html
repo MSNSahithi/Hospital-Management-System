@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card-custom mb-4">
+  <h2 class="fw-bold">Available Slots 🧑‍🤝‍🧑</h2>
+  <a href="/patient/dashboard/" class="btn btn-outline-light btn-custom mt-2">Back</a>
+</div>
+
+<div class="card-custom">
+  <form id="csrf-form">{% csrf_token %}</form>
+  {% if slots %}
+    <table class="table table-dark table-striped">
+      <tr>
+        <th>Doctor</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Action</th>
+      </tr>
+
+      {% for s in slots %}
+      <tr>
+        <td>{{s.doctor.username}}</td>
+        <td>{{s.date}}</td>
+        <td>{{s.start_time}} - {{s.end_time}}</td>
+        <td>
+            <a href="#" data-id="{{s.id}}" class="btn btn-success btn-sm book-btn">Book</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No slots available now.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  async function csrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+  }
+
+  document.querySelectorAll('.book-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const id = btn.dataset.id;
+      const token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      try {
+        const res = await fetch(`/patient/book/${id}/`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': token,
+            'Accept': 'application/json'
+          }
+        });
+
+        // If redirected to login (not authenticated), go to login page
+        if (res.redirected) {
+          window.location = res.url;
+          return;
+        }
+
+        const contentType = res.headers.get('content-type') || '';
+        let data = {};
+        if (contentType.includes('application/json')) {
+          data = await res.json();
+        } else {
+          // non-JSON response (e.g., HTML for login); redirect to login
+          if (!res.ok) {
+            window.location = '/patient/login/';
+            return;
+          }
+        }
+
+        if (res.ok) {
+          btn.textContent = 'Booked';
+          btn.classList.remove('btn-success');
+          btn.classList.add('btn-secondary');
+          btn.disabled = true;
+        } else {
+          alert(data.message || 'Booking failed');
+        }
+      } catch (err) {
+        alert('Network error')
+      }
+    })
+  })
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="text-center mb-5">
+  <h1 class="fw-bold">Hospital Management System</h1>
+  <p class="text-light">Choose your role to continue</p>
+</div>
+
+<div class="row g-4">
+
+  <div class="col-md-6">
+    <div class="card-custom">
+      <h3 class="fw-bold">👨‍⚕️ Doctor Panel</h3>
+      <p>Manage your slots & appointments</p>
+      <a href="/doctor/signup/" class="btn btn-primary btn-custom w-100 mb-2">Doctor Signup</a>
+      <a href="/doctor/login/" class="btn btn-outline-light btn-custom w-100">Doctor Login</a>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card-custom">
+      <h3 class="fw-bold">🧑‍🤝‍🧑 Patient Panel</h3>
+      <p>Book appointments easily</p>
+      <a href="/patient/signup/" class="btn btn-success btn-custom w-100 mb-2">Patient Signup</a>
+      <a href="/patient/login/" class="btn btn-outline-light btn-custom w-100">Patient Login</a>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HMS</title>
+
+  <!-- Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body{
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      min-height: 100vh;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .card-custom{
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0px 10px 30px rgba(0,0,0,0.4);
+    }
+    .btn-custom{
+      border-radius: 12px;
+      font-weight: bold;
+    }
+    .nav-link{
+      color: white !important;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <a class="navbar-brand fw-bold" href="/">🏥 HMS</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav ms-auto">
+        {% if request.user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="#">Hello, {{ request.user.username }}</a>
+        </li>
+        
+        {% if request.user.google_refresh_token %}
+          <li class="nav-item"><a class="nav-link" href="#">Google Connected</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="/accounts/connect-google/">Connect Google</a></li>
+        {% endif %}
+        {% if request.user.role|default_if_none:""|upper == "DOCTOR" %}
+          <li class="nav-item"><a class="nav-link" href="/doctor/dashboard/">Doctor Dashboard</a></li>
+        {% elif request.user.role|default_if_none:""|upper == "PATIENT" %}
+          <li class="nav-item"><a class="nav-link" href="/patient/dashboard/">Patient Dashboard</a></li>
+        {% endif %}
+        {% if request.user.role|default_if_none:""|upper == "PATIENT" %}
+        <li class="nav-item"><a class="nav-link" href="/doctors/">Find Doctors</a></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link" href="/logout/">Logout</a></li>
+      {% else %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Doctor</a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="/doctor/login/">Login</a></li>
+            <li><a class="dropdown-item" href="/doctor/signup/">Signup</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown ms-2">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Patient</a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="/patient/login/">Login</a></li>
+            <li><a class="dropdown-item" href="/patient/signup/">Signup</a></li>
+          </ul>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+<div class="container py-5">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info">{{message}}</div>
+    {% endfor %}
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
